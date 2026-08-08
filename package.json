@@ -19,11 +19,10 @@
     "lumine": "^1.0.0"
   },
   "backgroundTips": [
-    "You can delete a selection through the next indentation boundary with {{ 'bacadra-tools:delete-to-indent' | keystroke }}"
+    "Bacadra Tools can generalize national Eurocode citations into annex-neutral tokens."
   ],
   "main": "./lib/main",
   "files": [
-    "keymaps",
     "lib",
     "menus",
     "snippets",
@@ -43,13 +42,9 @@
       "bacadra-tools:open-YTDL",
       "bacadra-tools:unicode-readme",
       "bacadra-tools:ligatures",
-      "bacadra-tools:reopen-in-dev-mode",
       "bacadra-tools:signer",
       "bacadra-tools:revert",
       "bacadra-tools:cdb-clear",
-      "bacadra-tools:normalize-newlines",
-      "bacadra-tools:delete-to-indent",
-      "bacadra-tools:big-spaces",
       "bacadra-tools:generalize-cites",
       "bacadra-tools:create-gitignore"
     ]

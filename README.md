@@ -5,7 +5,7 @@ Commands and snippets for Bacadra engineering workflows.
 ## Features
 
 - **Workflow shortcuts**: open configured calculation, foundation, task, download, and Unicode resources.
-- **Editing commands**: swap signs, normalize whitespace, revert from disk, and reshape indentation.
+- **Editing commands**: swap signs and revert the active buffer from disk.
 - **Eurocode citations**: convert national citation keys into annex-neutral Bacadra tokens.
 - **Project helpers**: create Bacadra `.gitignore` files beside tree-view selections.
 - **Jupyter integration**: clear the active Bacadra cache through the running kernel.
@@ -13,7 +13,7 @@ Commands and snippets for Bacadra engineering workflows.
 
 ## Installation
 
-To install `bacadra-tools` search for _bacadra-tools_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/bacadra-tools`.
+This is a private package. From an authorized checkout, run `npm install` and link it into Lumine with `lumine --link <path-to-bacadra-tools>`.
 
 ## Commands
 
@@ -27,13 +27,9 @@ Commands available in `atom-workspace`:
 - `bacadra-tools:signer`: swap plus and minus signs in each selection,
 - `bacadra-tools:revert`: reload the active file from disk,
 - `bacadra-tools:cdb-clear`: clear Bacadra's cache through the active Jupyter kernel,
-- `bacadra-tools:normalize-newlines`: collapse runs of blank lines,
-- `bacadra-tools:big-spaces`: collapse consecutive content spaces without changing indentation,
-- `bacadra-tools:delete-to-indent`: delete a selection through the next indentation boundary,
 - `bacadra-tools:generalize-cites`: replace national Eurocode keys with annex-neutral tokens,
 - `bacadra-tools:create-gitignore`: create a Bacadra `.gitignore` beside each tree selection,
-- `bacadra-tools:ligatures`: toggle font ligatures,
-- `bacadra-tools:reopen-in-dev-mode`: reopen the current project in a development window.
+- `bacadra-tools:ligatures`: toggle font ligatures.
 
 ## Services
 

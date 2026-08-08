@@ -36,6 +36,15 @@ describe("bacadra-tools", () => {
     ]) {
       expect(commands).toContain(command);
     }
+
+    for (const migratedCommand of [
+      "bacadra-tools:reopen-in-dev-mode",
+      "bacadra-tools:normalize-newlines",
+      "bacadra-tools:delete-to-indent",
+      "bacadra-tools:big-spaces",
+    ]) {
+      expect(commands).not.toContain(migratedCommand);
+    }
   });
 
   it("swaps signs in every selection", () => {
@@ -56,22 +65,6 @@ describe("bacadra-tools", () => {
     atom.commands.dispatch(editorElement, "bacadra-tools:generalize-cites");
 
     expect(editor.getText()).toBe(":@en_1992-1-1: and :@en_1993-1-8:");
-  });
-
-  it("collapses runs of blank lines", () => {
-    editor.setText("one\n\n\n\n\ntwo\n");
-
-    atom.commands.dispatch(editorElement, "bacadra-tools:normalize-newlines");
-
-    expect(editor.getText()).toBe("one\n\ntwo\n");
-  });
-
-  it("collapses consecutive content spaces without changing indentation", () => {
-    editor.setText("  one    two\n \t  three  four\nfive\t  six\n");
-
-    atom.commands.dispatch(editorElement, "bacadra-tools:big-spaces");
-
-    expect(editor.getText()).toBe("  one two\n \t  three four\nfive\t six\n");
   });
 
   it("creates one Bacadra .gitignore beside a selected file", async () => {

@@ -15,22 +15,8 @@
             { "label": "Signer", "command": "bacadra-tools:signer" },
             { "label": "Revert", "command": "bacadra-tools:revert" },
             { "label": "CDB Clear", "command": "bacadra-tools:cdb-clear" },
-            {
-              "label": "Normalize Newlines",
-              "command": "bacadra-tools:normalize-newlines"
-            },
-            { "label": "Big Spaces", "command": "bacadra-tools:big-spaces" },
-            {
-              "label": "Delete to Indent",
-              "command": "bacadra-tools:delete-to-indent"
-            },
             { "label": "Generalize Cites", "command": "bacadra-tools:generalize-cites" },
-            { "type": "separator" },
-            { "label": "Toggle Ligatures", "command": "bacadra-tools:ligatures" },
-            {
-              "label": "Reopen in Dev Mode",
-              "command": "bacadra-tools:reopen-in-dev-mode"
-            }
+            { "label": "Toggle Ligatures", "command": "bacadra-tools:ligatures" }
           ]
         }
       ]

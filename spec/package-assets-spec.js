@@ -15,15 +15,12 @@ describe("bacadra-tools package assets", () => {
   });
 
   it("ships JSON integration files instead of CSON", () => {
-    for (const relativePath of [
-      "keymaps/bacadra-tools.json",
-      "menus/bacadra-tools.json",
-      "snippets/bacadra-tools.json",
-    ]) {
+    for (const relativePath of ["menus/bacadra-tools.json", "snippets/bacadra-tools.json"]) {
       expect(() =>
         JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8")),
       ).not.toThrow();
     }
+    expect(fs.existsSync(path.join(root, "keymaps/bacadra-tools.json"))).toBe(false);
     expect(fs.existsSync(path.join(root, "menus/bacadra-tools.cson"))).toBe(false);
   });
 });

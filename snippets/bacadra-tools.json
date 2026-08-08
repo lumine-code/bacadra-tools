@@ -1,0 +1,23 @@
+{
+  "*": {
+    "True -> False": { "prefix": "True", "body": "False" },
+    "False -> True": { "prefix": "False", "body": "True" },
+    "true -> false": { "prefix": "true", "body": "false" },
+    "false -> true": { "prefix": "false", "body": "true" }
+  },
+  ".source.python": {
+    "Section level 1": { "prefix": ".s1", "body": ".s(1, r'${1}') #?#" },
+    "Section level 2": { "prefix": ".s2", "body": ".s(2, r'${1}') #?#" },
+    "Section level 3": { "prefix": ".s3", "body": ".s(3, r'${1}') #?#" },
+    "Section level 4": { "prefix": ".s4", "body": ".s(4, r'${1}') #?#" },
+    "Section level 5": { "prefix": ".s5", "body": ".s(5, r'${1}') #?#" },
+    "Equation": { "prefix": ".e1", "body": ".e(rf'${1}')" },
+    "Text multiline": { "prefix": ".x1", "body": ".x(r'''\n${1}\n''')" },
+    "Picture": { "prefix": ".p1", "body": ".p(r'${1}')" },
+    "Picture with caption": { "prefix": ".p2", "body": ".p(r'${1}', r'${2}')" },
+    "Item": { "prefix": ".i1", "body": ".i(r'${1}')" },
+    "Item with equation": { "prefix": ".i2", "body": ".i(r'${1}', rf'${2}')" },
+    "Raw string": { "prefix": "r", "body": "r'${1}'" },
+    "Raw f-string": { "prefix": "rf", "body": "rf'${1}'" }
+  }
+}

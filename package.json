@@ -1,35 +1,110 @@
 {
   "name": "bacadra-tools",
-  "repository": "https://github.com/asiloisad/pulsar-bacadra-tools",
-  "description": "A superset of commands to improve bacadra workflow",
+  "author": "lumine-code",
+  "description": "Commands and snippets for Bacadra engineering workflows.",
+  "repository": "https://github.com/lumine-code/bacadra-tools",
+  "bugs": {
+    "url": "https://github.com/lumine-code/bacadra-tools/issues"
+  },
   "keywords": [
-    "bacadra",
-    "python"
+    "structural-engineering",
+    "python",
+    "eurocode",
+    "bibliography",
+    "jupyter"
   ],
-  "version": "0.0.2",
+  "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "atom": ">=1.100.0 <2.0.0"
+    "lumine": "^1.0.0"
   },
+  "backgroundTips": [
+    "You can delete a selection through the next indentation boundary with {{ 'bacadra-tools:delete-to-indent' | keystroke }}"
+  ],
   "main": "./lib/main",
+  "files": [
+    "keymaps",
+    "lib",
+    "menus",
+    "snippets",
+    "spec"
+  ],
+  "scripts": {
+    "test": "lumine --test spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "activationCommands": {
+    "atom-workspace": [
+      "bacadra-tools:open-CALC",
+      "bacadra-tools:open-FUND",
+      "bacadra-tools:open-TODO",
+      "bacadra-tools:open-YTDL",
+      "bacadra-tools:unicode-readme",
+      "bacadra-tools:ligatures",
+      "bacadra-tools:reopen-in-dev-mode",
+      "bacadra-tools:signer",
+      "bacadra-tools:revert",
+      "bacadra-tools:cdb-clear",
+      "bacadra-tools:normalize-newlines",
+      "bacadra-tools:delete-to-indent",
+      "bacadra-tools:big-spaces",
+      "bacadra-tools:generalize-cites",
+      "bacadra-tools:open-in-this-window",
+      "bacadra-tools:create-gitignore"
+    ]
+  },
   "consumedServices": {
-    "tree-view": {
+    "tree-view.selection": {
       "versions": {
-        "^1.0.0": "consumeTreeView"
+        "^1.0.0": "consumeTreeViewSelection"
       }
     },
-    "hydrogen.provider": {
+    "jupyter.kernel": {
       "versions": {
-        "^1.3.0": "consumeHydrogen"
-      }
-    },
-    "scroll-keeper": {
-      "versions": {
-        "^1.0.0": "consumeScrollKeeper"
+        "^1.0.0": "consumeJupyterKernel"
       }
     }
   },
-  "dependencies": {
-    "fs-extra": "^11.1.1"
+  "configSchema": {
+    "calcPath": {
+      "title": "CALC path",
+      "description": "Path to the calculation notebook or script opened by Open CALC. A leading ~ expands to the home directory.",
+      "type": "string",
+      "default": "~/Desktop/CALC.ipy"
+    },
+    "fundPath": {
+      "title": "FUND path",
+      "description": "Path to the foundation notebook or script opened by Open FUND. A leading ~ expands to the home directory.",
+      "type": "string",
+      "default": "~/Desktop/FUND.ipy"
+    },
+    "todoPath": {
+      "title": "TODO path",
+      "description": "Path opened by Open TODO. A leading ~ expands to the home directory.",
+      "type": "string",
+      "default": "~/Desktop/TODO"
+    },
+    "ytdlPath": {
+      "title": "YTDL path",
+      "description": "Path to the download script opened by Open YTDL. Leave empty until configured.",
+      "type": "string",
+      "default": ""
+    },
+    "unicodeReadmePath": {
+      "title": "Unicode readme path",
+      "description": "Path to the Markdown document opened in preview by Unicode Readme. Leave empty until configured.",
+      "type": "string",
+      "default": ""
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.2.2",
+    "globals": "^17.9.0",
+    "prettier": "^3.9.6"
   }
 }

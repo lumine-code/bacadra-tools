@@ -32,7 +32,6 @@ describe("bacadra-tools", () => {
       "bacadra-tools:signer",
       "bacadra-tools:generalize-cites",
       "bacadra-tools:create-gitignore",
-      "bacadra-tools:open-in-this-window",
       "bacadra-tools:cdb-clear",
     ]) {
       expect(commands).toContain(command);
@@ -65,15 +64,6 @@ describe("bacadra-tools", () => {
     atom.commands.dispatch(editorElement, "bacadra-tools:normalize-newlines");
 
     expect(editor.getText()).toBe("one\n\ntwo\n");
-  });
-
-  it("replaces the project through the tree-view selection service", async () => {
-    const otherDir = fs.mkdtempSync(path.join(tempDir, "project-"));
-    mainModule.consumeTreeViewSelection({ selectedPaths: () => [otherDir] });
-    spyOn(atom.project, "setState").and.returnValue(Promise.resolve(true));
-
-    expect(await mainModule.openInThisWindow()).toBe(true);
-    expect(atom.project.setState).toHaveBeenCalledWith([otherDir]);
   });
 
   it("creates one Bacadra .gitignore beside a selected file", async () => {

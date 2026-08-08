@@ -7,7 +7,7 @@ Commands and snippets for Bacadra engineering workflows.
 - **Workflow shortcuts**: open configured calculation, foundation, task, download, and Unicode resources.
 - **Editing commands**: swap signs, normalize whitespace, revert from disk, and reshape indentation.
 - **Eurocode citations**: convert national citation keys into annex-neutral Bacadra tokens.
-- **Project helpers**: replace the current project from the tree view and create Bacadra `.gitignore` files.
+- **Project helpers**: create Bacadra `.gitignore` files beside tree-view selections.
 - **Jupyter integration**: clear the active Bacadra cache through the running kernel.
 - **Python snippets**: insert Bacadra sections, equations, pictures, items, and raw strings.
 
@@ -31,7 +31,6 @@ Commands available in `atom-workspace`:
 - `bacadra-tools:big-spaces`: collapse runs of blank lines,
 - `bacadra-tools:delete-to-indent`: delete a selection through the next indentation boundary,
 - `bacadra-tools:generalize-cites`: replace national Eurocode keys with annex-neutral tokens,
-- `bacadra-tools:open-in-this-window`: replace the current project with selected tree directories,
 - `bacadra-tools:create-gitignore`: create a Bacadra `.gitignore` beside each tree selection,
 - `bacadra-tools:ligatures`: toggle font ligatures,
 - `bacadra-tools:reopen-in-dev-mode`: reopen the current project in a development window.

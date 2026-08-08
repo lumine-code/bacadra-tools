@@ -39,10 +39,6 @@
   "context-menu": {
     ".tree-view-root:not(.multi-select) .directory > .header": [
       { "type": "separator" },
-      {
-        "label": "Open in This Window",
-        "command": "bacadra-tools:open-in-this-window"
-      },
       { "label": "Create .gitignore", "command": "bacadra-tools:create-gitignore" },
       { "type": "separator" }
     ],

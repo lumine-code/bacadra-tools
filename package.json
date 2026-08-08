@@ -51,7 +51,6 @@
       "bacadra-tools:delete-to-indent",
       "bacadra-tools:big-spaces",
       "bacadra-tools:generalize-cites",
-      "bacadra-tools:open-in-this-window",
       "bacadra-tools:create-gitignore"
     ]
   },

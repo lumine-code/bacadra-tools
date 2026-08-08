@@ -1,0 +1,35 @@
+{
+  "name": "bacadra-tools",
+  "repository": "https://github.com/asiloisad/pulsar-bacadra-tools",
+  "description": "A superset of commands to improve bacadra workflow",
+  "keywords": [
+    "bacadra",
+    "python"
+  ],
+  "version": "0.0.2",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.100.0 <2.0.0"
+  },
+  "main": "./lib/main",
+  "consumedServices": {
+    "tree-view": {
+      "versions": {
+        "^1.0.0": "consumeTreeView"
+      }
+    },
+    "hydrogen.provider": {
+      "versions": {
+        "^1.3.0": "consumeHydrogen"
+      }
+    },
+    "scroll-keeper": {
+      "versions": {
+        "^1.0.0": "consumeScrollKeeper"
+      }
+    }
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1"
+  }
+}

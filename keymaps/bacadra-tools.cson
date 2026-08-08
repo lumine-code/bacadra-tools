@@ -1,0 +1,2 @@
+'atom-text-editor:not([mini])':
+  'alt-delete': 'bacadra-tools:delete-to-indent'

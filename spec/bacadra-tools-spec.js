@@ -66,6 +66,14 @@ describe("bacadra-tools", () => {
     expect(editor.getText()).toBe("one\n\ntwo\n");
   });
 
+  it("collapses consecutive content spaces without changing indentation", () => {
+    editor.setText("  one    two\n \t  three  four\n");
+
+    atom.commands.dispatch(editorElement, "bacadra-tools:big-spaces");
+
+    expect(editor.getText()).toBe("  one two\n \t  three four\n");
+  });
+
   it("creates one Bacadra .gitignore beside a selected file", async () => {
     const filePath = path.join(tempDir, "model.py");
     fs.writeFileSync(filePath, "");

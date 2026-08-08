@@ -28,7 +28,7 @@ Commands available in `atom-workspace`:
 - `bacadra-tools:revert`: reload the active file from disk,
 - `bacadra-tools:cdb-clear`: clear Bacadra's cache through the active Jupyter kernel,
 - `bacadra-tools:normalize-newlines`: collapse runs of blank lines,
-- `bacadra-tools:big-spaces`: collapse runs of blank lines,
+- `bacadra-tools:big-spaces`: collapse consecutive content spaces without changing indentation,
 - `bacadra-tools:delete-to-indent`: delete a selection through the next indentation boundary,
 - `bacadra-tools:generalize-cites`: replace national Eurocode keys with annex-neutral tokens,
 - `bacadra-tools:create-gitignore`: create a Bacadra `.gitignore` beside each tree selection,

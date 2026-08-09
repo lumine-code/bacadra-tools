@@ -17,7 +17,7 @@ This is a private package. From an authorized checkout, run `npm install` and li
 
 ## Commands
 
-Commands available in `atom-workspace`:
+Commands available in `lumine-workspace`:
 
 - `bacadra-tools:open-CALC`: open the configured calculation resource,
 - `bacadra-tools:open-FUND`: open the configured foundation resource,

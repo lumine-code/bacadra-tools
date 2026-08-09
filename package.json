@@ -35,7 +35,7 @@
     "format:check": "prettier --check ."
   },
   "activationCommands": {
-    "atom-workspace": [
+    "lumine-workspace": [
       "bacadra-tools:open-CALC",
       "bacadra-tools:open-FUND",
       "bacadra-tools:open-TODO",

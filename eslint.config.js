@@ -3,7 +3,7 @@ const n = require("eslint-plugin-n");
 const globals = require("globals");
 const prettier = require("eslint-config-prettier");
 
-const runtimeModules = ["atom"];
+const runtimeModules = ["lumine"];
 
 module.exports = [
   js.configs.recommended,
@@ -13,7 +13,7 @@ module.exports = [
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "commonjs",
-      globals: { ...globals.browser, ...globals.node, atom: "readonly" },
+      globals: { ...globals.browser, ...globals.node, lumine: "readonly" },
     },
     rules: {
       "no-unused-vars": ["error", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],

@@ -6,26 +6,26 @@ describe("bacadra-tools", () => {
   let editor, editorElement, mainModule, tempDir;
 
   beforeEach(async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
-    editor = await atom.workspace.open("notes.py");
-    editorElement = atom.views.getView(editor);
-    const activation = atom.packages.activatePackage("bacadra-tools");
-    atom.commands.dispatch(editorElement, "bacadra-tools:signer");
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
+    editor = await lumine.workspace.open("notes.py");
+    editorElement = lumine.views.getView(editor);
+    const activation = lumine.packages.activatePackage("bacadra-tools");
+    lumine.commands.dispatch(editorElement, "bacadra-tools:signer");
     mainModule = (await activation).mainModule;
     editor.setText("");
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "bacadra-tools-"));
   });
 
   afterEach(async () => {
-    await atom.packages.deactivatePackage("bacadra-tools");
+    await lumine.packages.deactivatePackage("bacadra-tools");
     if (tempDir) {
       fs.rmSync(tempDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
     }
   });
 
   it("registers its complete command surface on the workspace", () => {
-    const commands = atom.commands
-      .findCommands({ target: atom.views.getView(atom.workspace) })
+    const commands = lumine.commands
+      .findCommands({ target: lumine.views.getView(lumine.workspace) })
       .map(({ name }) => name);
 
     for (const command of [
@@ -54,7 +54,7 @@ describe("bacadra-tools", () => {
       [0, 9],
     ]);
 
-    atom.commands.dispatch(editorElement, "bacadra-tools:signer");
+    lumine.commands.dispatch(editorElement, "bacadra-tools:signer");
 
     expect(editor.getText()).toBe("a - b + c");
   });
@@ -62,7 +62,7 @@ describe("bacadra-tools", () => {
   it("generalizes national Eurocode citation keys", () => {
     editor.setText("pn-en_1992-1-1:2008 and din-en_1993-1-8:2010-12");
 
-    atom.commands.dispatch(editorElement, "bacadra-tools:generalize-cites");
+    lumine.commands.dispatch(editorElement, "bacadra-tools:generalize-cites");
 
     expect(editor.getText()).toBe(":@en_1992-1-1: and :@en_1993-1-8:");
   });
@@ -90,7 +90,7 @@ describe("bacadra-tools", () => {
 
   it("warns when cache clearing has no active kernel", async () => {
     const notifications = [];
-    atom.notifications.onDidAddNotification((notification) => notifications.push(notification));
+    lumine.notifications.onDidAddNotification((notification) => notifications.push(notification));
     mainModule.consumeJupyterKernel({ getActiveKernel: () => null });
 
     await mainModule.cdbClear();

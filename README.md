@@ -33,8 +33,8 @@ Commands available in `lumine-workspace`:
 
 ## Services
 
-- **tree-view.selection** (`^1.0.0`): consumed to read directories and files selected in the tree view.
-- **jupyter.kernel** (`^1.0.0`): consumed to clear Bacadra's cache through the active kernel.
+- `tree-view.selection`: consumed to read directories and files selected in the tree view.
+- `jupyter.kernel`: consumed to clear Bacadra's cache through the active kernel.
 
 ## Contributing
 

@@ -15,7 +15,7 @@ describe("bacadra-tools package assets", () => {
   });
 
   it("ships JSON integration files instead of CSON", () => {
-    for (const relativePath of ["menus/bacadra-tools.json", "snippets/bacadra-tools.json"]) {
+    for (const relativePath of ["menus/main.json", "snippets/main.json"]) {
       expect(() =>
         JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8")),
       ).not.toThrow();

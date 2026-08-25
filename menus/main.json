@@ -21,22 +21,5 @@
         }
       ]
     }
-  ],
-  "context-menu": {
-    ".tree-view-root:not(.multi-select) .directory > .header": [
-      { "type": "separator" },
-      { "label": "Create .gitignore", "command": "bacadra-tools:create-gitignore" },
-      { "type": "separator" }
-    ],
-    ".tree-view-root:not(.multi-select) .file": [
-      { "type": "separator" },
-      { "label": "Create .gitignore", "command": "bacadra-tools:create-gitignore" },
-      { "type": "separator" }
-    ],
-    ".tree-view-root.multi-select": [
-      { "type": "separator" },
-      { "label": "Create .gitignore", "command": "bacadra-tools:create-gitignore" },
-      { "type": "separator" }
-    ]
-  }
+  ]
 }

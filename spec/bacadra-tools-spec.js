@@ -67,6 +67,21 @@ describe("bacadra-tools", () => {
     expect(editor.getText()).toBe(":@en_1992-1-1: and :@en_1993-1-8:");
   });
 
+  it("toggles ligatures in the command target's detached Window", async () => {
+    lumine.initializeDetachedPaneSurfaces({ force: true });
+    const pane = await lumine.workspace.detachPaneItem(editor, { show: false });
+    const surface = lumine.workspace.getWindowSurface(editor);
+
+    try {
+      await lumine.commands.dispatch(editorElement, "bacadra-tools:ligatures");
+      expect(surface.document.body.style.fontVariantLigatures).toBe("none");
+      expect(document.body.style.fontVariantLigatures).toBe("");
+    } finally {
+      if (pane.isDetached()) await lumine.workspace.attachDetachedPane(pane);
+      lumine.initializeDetachedPaneSurfaces();
+    }
+  });
+
   it("creates one Bacadra .gitignore beside a selected file", async () => {
     const filePath = path.join(tempDir, "model.py");
     fs.writeFileSync(filePath, "");

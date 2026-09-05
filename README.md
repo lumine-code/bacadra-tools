@@ -13,7 +13,7 @@ Commands and snippets for Bacadra engineering workflows.
 
 ## Installation
 
-This is a private package. From an authorized checkout, run `npm install` and link it into Lumine with `lumine --link <path-to-bacadra-tools>`.
+To install `bacadra-tools` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/bacadra-tools`.
 
 ## Commands
 

@@ -34,21 +34,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-  "activationCommands": {
-    "lumine-workspace": [
-      "bacadra-tools:open-CALC",
-      "bacadra-tools:open-FUND",
-      "bacadra-tools:open-TODO",
-      "bacadra-tools:open-YTDL",
-      "bacadra-tools:unicode-readme",
-      "bacadra-tools:ligatures",
-      "bacadra-tools:signer",
-      "bacadra-tools:revert",
-      "bacadra-tools:cdb-clear",
-      "bacadra-tools:generalize-cites",
-      "bacadra-tools:create-gitignore"
-    ]
-  },
   "consumedServices": {
     "tree-view.selection": {
       "versions": {

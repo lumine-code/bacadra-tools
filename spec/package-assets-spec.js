@@ -10,6 +10,7 @@ describe("bacadra-tools package assets", () => {
     expect(manifest.author).toBe("lumine-code");
     expect(manifest.consumedServices["tree-view.selection"]).toBeDefined();
     expect(manifest.consumedServices["jupyter.kernel"]).toBeDefined();
+    expect(manifest.consumedServices["jupyter.kernel"].activation).toBeUndefined();
     expect(manifest.consumedServices["hydrogen.provider"]).toBeUndefined();
     expect(manifest.consumedServices["scroll-keeper"]).toBeUndefined();
   });

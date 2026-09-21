@@ -3,7 +3,7 @@ const os = require("os");
 const path = require("path");
 
 describe("bacadra-tools", () => {
-  let editor, editorElement, mainModule, tempDir;
+  let editor, editorElement, mainModule, runtimeRequest, tempDir;
 
   beforeEach(async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
@@ -12,6 +12,9 @@ describe("bacadra-tools", () => {
     const activation = lumine.packages.activatePackage("bacadra-tools");
     lumine.commands.dispatch(editorElement, "bacadra-tools:signer");
     mainModule = (await activation).mainModule;
+    runtimeRequest = spyOn(lumine.packages, "requestService").and.returnValue(
+      Promise.resolve(true),
+    );
     editor.setText("");
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "bacadra-tools-"));
   });
@@ -57,6 +60,7 @@ describe("bacadra-tools", () => {
     lumine.commands.dispatch(editorElement, "bacadra-tools:signer");
 
     expect(editor.getText()).toBe("a - b + c");
+    expect(runtimeRequest).not.toHaveBeenCalled();
   });
 
   it("generalizes national Eurocode citation keys", () => {
@@ -93,6 +97,20 @@ describe("bacadra-tools", () => {
 
     await mainModule.cdbClear();
 
+    expect(runtimeRequest).not.toHaveBeenCalled();
+    expect(execute).toHaveBeenCalledWith("cdb.clear()");
+  });
+
+  it("requests jupyter.kernel before clearing when the service is absent", async () => {
+    const execute = jasmine.createSpy("execute").and.resolveTo({ status: "ok" });
+    runtimeRequest.and.callFake(async () => {
+      mainModule.consumeJupyterKernel({ getActiveKernel: () => ({ execute }) });
+      return true;
+    });
+
+    await mainModule.cdbClear();
+
+    expect(runtimeRequest).toHaveBeenCalledWith("jupyter.kernel", "^1.0.0");
     expect(execute).toHaveBeenCalledWith("cdb.clear()");
   });
 

@@ -6,10 +6,10 @@
         {
           "label": "Bacadra Tools",
           "submenu": [
-            { "label": "Open CALC", "command": "bacadra-tools:open-CALC" },
-            { "label": "Open FUND", "command": "bacadra-tools:open-FUND" },
-            { "label": "Open TODO", "command": "bacadra-tools:open-TODO" },
-            { "label": "Open YTDL", "command": "bacadra-tools:open-YTDL" },
+            { "label": "Open CALC", "command": "bacadra-tools:open-calc" },
+            { "label": "Open FUND", "command": "bacadra-tools:open-fund" },
+            { "label": "Open TODO", "command": "bacadra-tools:open-todo" },
+            { "label": "Open YTDL", "command": "bacadra-tools:open-ytdl" },
             { "label": "Unicode Readme", "command": "bacadra-tools:unicode-readme" },
             { "type": "separator" },
             { "label": "Signer", "command": "bacadra-tools:signer" },

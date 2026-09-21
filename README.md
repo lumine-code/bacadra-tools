@@ -19,10 +19,10 @@ To install `bacadra-tools` search for it in the Install pane of the Lumine setti
 
 Commands available in `lumine-workspace`:
 
-- `bacadra-tools:open-CALC`: open the configured calculation resource,
-- `bacadra-tools:open-FUND`: open the configured foundation resource,
-- `bacadra-tools:open-TODO`: open the configured task resource,
-- `bacadra-tools:open-YTDL`: open the configured download script,
+- `bacadra-tools:open-calc`: open the configured calculation resource,
+- `bacadra-tools:open-fund`: open the configured foundation resource,
+- `bacadra-tools:open-todo`: open the configured task resource,
+- `bacadra-tools:open-ytdl`: open the configured download script,
 - `bacadra-tools:unicode-readme`: preview the configured Unicode reference,
 - `bacadra-tools:signer`: swap plus and minus signs in each selection,
 - `bacadra-tools:revert`: reload the active file from disk,

@@ -13,6 +13,7 @@
             { "label": "Unicode Readme", "command": "bacadra-tools:unicode-readme" },
             { "type": "separator" },
             { "label": "Signer", "command": "bacadra-tools:signer" },
+            { "label": "Renumber Paths", "command": "bacadra-tools:renumber" },
             { "label": "Revert", "command": "bacadra-tools:revert" },
             { "label": "CDB Clear", "command": "bacadra-tools:cdb-clear" },
             { "label": "Generalize Cites", "command": "bacadra-tools:generalize-cites" },

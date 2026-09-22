@@ -33,6 +33,7 @@ describe("bacadra-tools", () => {
 
     for (const command of [
       "bacadra-tools:signer",
+      "bacadra-tools:renumber",
       "bacadra-tools:generalize-cites",
       "bacadra-tools:create-gitignore",
       "bacadra-tools:cdb-clear",
@@ -61,6 +62,23 @@ describe("bacadra-tools", () => {
 
     expect(editor.getText()).toBe("a - b + c");
     expect(runtimeRequest).not.toHaveBeenCalled();
+  });
+
+  it("renumbers matching paths in document order", () => {
+    const prefix = "assets/[e] {cdbname}/[r] fatig";
+    editor.setText(
+      `${prefix}-1.png\n${prefix}-15.png\nother\n${prefix}-5.png\n${prefix}-20-final.png`,
+    );
+    editor.setSelectedBufferRange([
+      [0, 0],
+      [0, prefix.length],
+    ]);
+
+    lumine.commands.dispatch(editorElement, "bacadra-tools:renumber");
+
+    expect(editor.getText()).toBe(
+      `${prefix}-1.png\n${prefix}-2.png\nother\n${prefix}-3.png\n${prefix}-4-final.png`,
+    );
   });
 
   it("generalizes national Eurocode citation keys", () => {

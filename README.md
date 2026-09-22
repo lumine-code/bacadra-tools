@@ -5,7 +5,7 @@ Commands and snippets for Bacadra engineering workflows.
 ## Features
 
 - **Workflow shortcuts**: open configured calculation, foundation, task, download, and Unicode resources.
-- **Editing commands**: swap signs and revert the active buffer from disk.
+- **Editing commands**: swap signs, renumber matching paths, and revert the active buffer from disk.
 - **Eurocode citations**: convert national citation keys into annex-neutral Bacadra tokens.
 - **Project helpers**: create Bacadra `.gitignore` files beside tree-view selections.
 - **Jupyter integration**: clear the active Bacadra cache through the running kernel.
@@ -25,6 +25,7 @@ Commands available in `lumine-workspace`:
 - `bacadra-tools:open-ytdl`: open the configured download script,
 - `bacadra-tools:unicode-readme`: preview the configured Unicode reference,
 - `bacadra-tools:signer`: swap plus and minus signs in each selection,
+- `bacadra-tools:renumber`: renumber matching file names from a selected prefix,
 - `bacadra-tools:revert`: reload the active file from disk,
 - `bacadra-tools:cdb-clear`: clear Bacadra's cache through the active Jupyter kernel,
 - `bacadra-tools:generalize-cites`: replace national Eurocode keys with annex-neutral tokens,

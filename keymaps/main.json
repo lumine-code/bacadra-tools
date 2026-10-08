@@ -1,0 +1,7 @@
+{
+  "lumine-workspace": {
+    "ctrl-1": "bacadra-tools:open-calc",
+    "ctrl-2": "bacadra-tools:open-fund",
+    "ctrl-3": "bacadra-tools:open-todo"
+  }
+}

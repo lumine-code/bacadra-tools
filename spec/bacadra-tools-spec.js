@@ -142,4 +142,189 @@ describe("bacadra-tools", () => {
     expect(notifications.at(-1).getType()).toBe("warning");
     expect(notifications.at(-1).getMessage()).toContain("No active Jupyter kernel");
   });
+
+  describe("asynchronous revert", () => {
+    async function openSource() {
+      const sourcePath = path.join(tempDir, "source.txt");
+      fs.writeFileSync(sourcePath, "disk one\ndisk two");
+      editor = await lumine.workspace.open(sourcePath);
+      editorElement = lumine.views.getView(editor);
+      editor.setText("unsaved one\nunsaved two");
+      editor.setCursorBufferPosition([1, 2]);
+      return editor.getPath();
+    }
+
+    function deferred() {
+      let resolve, reject;
+      const promise = new Promise((finish, fail) => {
+        resolve = finish;
+        reject = fail;
+      });
+      return { promise, resolve, reject };
+    }
+
+    function delayRead(sourcePath, ...responses) {
+      const original = fs.promises.readFile;
+      return spyOn(fs.promises, "readFile").and.callFake((filePath, ...options) =>
+        filePath === sourcePath
+          ? responses.shift().promise
+          : original.call(fs.promises, filePath, ...options),
+      );
+    }
+
+    it("deliberately reverts existing unsaved text and retains its normal undo step", async () => {
+      await openSource();
+      editor.getBuffer().clearUndoStack();
+
+      await expectAsync(mainModule.revertBuffer({ target: editorElement })).toBeResolvedTo(
+        undefined,
+      );
+
+      expect(editor.getText()).toBe("disk one\ndisk two");
+      expect(editor.getCursorBufferPosition()).toEqual([1, 2]);
+      editor.undo();
+      expect(editor.getText()).toBe("unsaved one\nunsaved two");
+    });
+
+    it("does not apply the old file's data after the editor changes path", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      const targetPath = path.join(tempDir, "new-target.txt");
+      fs.writeFileSync(targetPath, "new target on disk");
+      editor.getBuffer().setPath(targetPath);
+      editor.setText("edits in the new target");
+      response.resolve("old file data");
+      await pending;
+
+      expect(editor.getPath()).toBe(targetPath);
+      expect(editor.getText()).toBe("edits in the new target");
+    });
+
+    it("preserves edits made after the revert request starts", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      editor.insertText("later edits");
+      const updated = editor.getText();
+      response.resolve("old file data");
+      await pending;
+
+      expect(editor.getText()).toBe(updated);
+    });
+
+    it("discards a revert after its package generation deactivates", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      await lumine.packages.deactivatePackage("bacadra-tools");
+      response.resolve("old file data");
+      await pending;
+
+      expect(editor.getText()).toBe("unsaved one\nunsaved two");
+    });
+
+    it("ignores a read that completes after the editor is destroyed", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const error = spyOn(lumine.notifications, "addError");
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      editor.destroy();
+      response.resolve("old file data");
+      await expectAsync(pending).toBeResolved();
+
+      expect(error).not.toHaveBeenCalled();
+    });
+
+    it("keeps the newest revert when two reads finish in reverse order", async () => {
+      const sourcePath = await openSource();
+      const older = deferred();
+      const newer = deferred();
+      delayRead(sourcePath, older, newer);
+      const first = mainModule.revertBuffer({ target: editorElement });
+      const second = mainModule.revertBuffer({ target: editorElement });
+      newer.resolve("newest disk one\nnewest disk two");
+      await second;
+      older.resolve("older disk text");
+      await first;
+
+      expect(editor.getText()).toBe("newest disk one\nnewest disk two");
+    });
+
+    it("shares latest-request ownership between two editors of the same buffer", async () => {
+      const sourcePath = await openSource();
+      const copy = editor.copy();
+      expect(copy.getBuffer()).toBe(editor.getBuffer());
+      lumine.workspace.getActivePane().addItem(copy);
+      const copyElement = lumine.views.getView(copy);
+      expect(mainModule.editorForEvent({ target: copyElement })).toBe(copy);
+      const older = deferred();
+      const newer = deferred();
+      delayRead(sourcePath, older, newer);
+      try {
+        const first = mainModule.revertBuffer({ target: editorElement });
+        const second = mainModule.revertBuffer({ target: copyElement });
+        newer.resolve(editor.getText());
+        await second;
+        older.resolve("older shared-buffer data");
+        await first;
+
+        expect(editor.getText()).toBe("unsaved one\nunsaved two");
+        expect(copy.getText()).toBe("unsaved one\nunsaved two");
+      } finally {
+        copy.destroy();
+      }
+    });
+
+    it("suppresses an obsolete read error after the target path changes", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const error = spyOn(lumine.notifications, "addError");
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      editor.getBuffer().setPath(path.join(tempDir, "changed.txt"));
+      response.reject(new Error("Old target disappeared"));
+      await pending;
+
+      expect(error).not.toHaveBeenCalled();
+    });
+
+    it("preserves a cursor and text changed reentrantly by the revert write", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      const subscription = editor.onDidChange(() => {
+        if (editor.getText() !== "incoming disk data") return;
+        editor.setText("replacement written reentrantly");
+        editor.setCursorBufferPosition([0, 1]);
+      });
+      try {
+        response.resolve("incoming disk data");
+        await pending;
+        expect(editor.getText()).toBe("replacement written reentrantly");
+        expect(editor.getCursorBufferPosition()).toEqual([0, 1]);
+      } finally {
+        subscription.dispose();
+      }
+    });
+
+    it("still reports a failure for the current revert target", async () => {
+      const sourcePath = await openSource();
+      const response = deferred();
+      delayRead(sourcePath, response);
+      const error = spyOn(lumine.notifications, "addError");
+      const pending = mainModule.revertBuffer({ target: editorElement });
+      response.reject(new Error("Permission denied"));
+      await pending;
+
+      expect(error).toHaveBeenCalledWith("Failed to revert the file from disk", {
+        detail: "Permission denied",
+      });
+    });
+  });
 });

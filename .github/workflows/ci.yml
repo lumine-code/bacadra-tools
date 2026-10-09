@@ -40,6 +40,8 @@ jobs:
         run: npm run lint
       - name: Check formatting
         run: npm run format:check
+      - name: Verify packed keyboard shortcuts
+        run: npm run test:pack
 
   integration:
     name: Lumine integration specs

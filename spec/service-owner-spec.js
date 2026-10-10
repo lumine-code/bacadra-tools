@@ -22,12 +22,36 @@ describe("Bacadra borrowed service ownership", () => {
     providers.push(provider);
     return provider;
   }
+  function pendingExecution() {
+    let finish;
+    const handle = {
+      generation: 0,
+      done: new Promise((resolve) => (finish = resolve)),
+      dispose: jasmine.createSpy("dispose request").and.callFake(() => {
+        finish({ status: "cancelled" });
+      }),
+    };
+    const session = {
+      generation: 0,
+      isDestroyed: () => false,
+      request: jasmine.createSpy("session request").and.returnValue(handle),
+    };
+    return { session, handle, finish };
+  }
   for (const [name, method, marker] of [
     ["tree-view.selection", "selectedPaths", ["owned-selection"]],
     [
       "jupyter.kernel",
       "getActiveKernel",
-      { execute: jasmine.createSpy("inert kernel execute").and.resolveTo({ status: "ok" }) },
+      {
+        generation: 0,
+        isDestroyed: () => false,
+        request: jasmine.createSpy("inert session request").and.returnValue({
+          generation: 0,
+          done: Promise.resolve({ status: "ok" }),
+          dispose: jasmine.createSpy("dispose inert request"),
+        }),
+      },
     ],
   ]) {
     const read = () =>
@@ -76,13 +100,13 @@ describe("Bacadra borrowed service ownership", () => {
     expect(lumine.packages.requestService).toHaveBeenCalledWith("jupyter.kernel", "^1.0.0");
     await lumine.packages.deactivatePackage("bacadra-tools");
     main = (await lumine.packages.activatePackage("bacadra-tools")).mainModule;
-    const execute = jasmine.createSpy("replacement kernel execute").and.resolveTo({ status: "ok" });
-    provide("jupyter.kernel", { getActiveKernel: () => ({ execute }) });
+    const { session } = pendingExecution();
+    provide("jupyter.kernel", { getActiveKernel: () => session });
 
     release();
     await clearing;
 
-    expect(execute).not.toHaveBeenCalled();
+    expect(session.request).not.toHaveBeenCalled();
   });
 
   it("does not issue a no-kernel warning after the waiting owner deactivates", async () => {
@@ -111,22 +135,57 @@ describe("Bacadra borrowed service ownership", () => {
     });
   });
 
-  it("reports a failed kernel operation already submitted before deactivation", async () => {
-    let reject;
-    const execute = jasmine
-      .createSpy("submitted execution")
-      .and.returnValue(new Promise((_resolve, fail) => (reject = fail)));
-    provide("jupyter.kernel", { getActiveKernel: () => ({ execute }) });
+  it("disposes a submitted request without a late notification after deactivation", async () => {
+    const { session, handle, finish } = pendingExecution();
+    provide("jupyter.kernel", { getActiveKernel: () => session });
     const error = spyOn(lumine.notifications, "addError");
+    const success = spyOn(lumine.notifications, "addSuccess");
     const clearing = main.cdbClear();
-    await globalThis.conditionPromise(() => execute.calls.any(), "kernel execution submitted");
+    await globalThis.conditionPromise(() => session.request.calls.any(), "request submitted");
     await lumine.packages.deactivatePackage("bacadra-tools");
 
-    reject(new Error("Submitted operation failed"));
+    expect(handle.dispose).toHaveBeenCalledTimes(1);
+    finish({ status: "error", error: { ename: "Error", evalue: "Late operation failure" } });
     await clearing;
 
-    expect(error).toHaveBeenCalledWith("Failed to clear cache", {
-      detail: "Submitted operation failed",
-    });
+    expect(error).not.toHaveBeenCalled();
+    expect(success).not.toHaveBeenCalled();
+    expect(handle.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it("disposes a pending request when its final provider lease is revoked", async () => {
+    const { session, handle, finish } = pendingExecution();
+    const provider = provide("jupyter.kernel", { getActiveKernel: () => session });
+    const error = spyOn(lumine.notifications, "addError");
+    const success = spyOn(lumine.notifications, "addSuccess");
+    const clearing = main.cdbClear();
+    await globalThis.conditionPromise(() => session.request.calls.any(), "request submitted");
+
+    provider.dispose();
+    expect(handle.dispose).toHaveBeenCalledTimes(1);
+    finish({ status: "ok" });
+    await clearing;
+
+    expect(error).not.toHaveBeenCalled();
+    expect(success).not.toHaveBeenCalled();
+    expect(handle.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it("retains a pending request while a shared provider lease remains", async () => {
+    const { session, handle, finish } = pendingExecution();
+    const value = { getActiveKernel: () => session };
+    const first = provide("jupyter.kernel", value);
+    provide("jupyter.kernel", value);
+    const success = spyOn(lumine.notifications, "addSuccess");
+    const clearing = main.cdbClear();
+    await globalThis.conditionPromise(() => session.request.calls.any(), "request submitted");
+
+    first.dispose();
+    expect(handle.dispose).not.toHaveBeenCalled();
+    finish({ status: "ok" });
+    await clearing;
+
+    expect(success).toHaveBeenCalledWith("Cache cleared");
+    expect(handle.dispose).toHaveBeenCalledTimes(1);
   });
 });

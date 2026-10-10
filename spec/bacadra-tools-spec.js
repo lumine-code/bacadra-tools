@@ -110,26 +110,108 @@ describe("bacadra-tools", () => {
   });
 
   it("clears the cache through the jupyter.kernel service", async () => {
-    const execute = jasmine.createSpy("execute").and.returnValue(Promise.resolve({ status: "ok" }));
-    mainModule.consumeJupyterKernel({ getActiveKernel: () => ({ execute }) });
+    const { kernel, operation } = kernelForOutcome({ status: "ok" });
+    const success = spyOn(lumine.notifications, "addSuccess");
+    mainModule.consumeJupyterKernel({ getActiveKernel: () => kernel });
 
     await mainModule.cdbClear();
 
     expect(runtimeRequest).not.toHaveBeenCalled();
-    expect(execute).toHaveBeenCalledWith("cdb.clear()");
+    expect(kernel.request).toHaveBeenCalledOnceWith({
+      type: "execute",
+      purpose: "user",
+      code: "cdb.clear()",
+    });
+    expect(success).toHaveBeenCalledOnceWith("Cache cleared");
+    expect(operation.dispose).toHaveBeenCalledTimes(1);
   });
 
   it("requests jupyter.kernel before clearing when the service is absent", async () => {
-    const execute = jasmine.createSpy("execute").and.resolveTo({ status: "ok" });
+    const { kernel, operation } = kernelForOutcome({ status: "ok" });
     runtimeRequest.and.callFake(async () => {
-      mainModule.consumeJupyterKernel({ getActiveKernel: () => ({ execute }) });
+      mainModule.consumeJupyterKernel({ getActiveKernel: () => kernel });
       return true;
     });
 
     await mainModule.cdbClear();
 
     expect(runtimeRequest).toHaveBeenCalledWith("jupyter.kernel", "^1.0.0");
-    expect(execute).toHaveBeenCalledWith("cdb.clear()");
+    expect(kernel.request).toHaveBeenCalledOnceWith({
+      type: "execute",
+      purpose: "user",
+      code: "cdb.clear()",
+    });
+    expect(operation.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  function kernelForOutcome(outcome) {
+    const operation = {
+      generation: 1,
+      done: Promise.resolve(outcome),
+      dispose: jasmine.createSpy("dispose request"),
+    };
+    const kernel = {
+      generation: 1,
+      isDestroyed: () => false,
+      request: jasmine.createSpy("request").and.returnValue(operation),
+    };
+    return { kernel, operation };
+  }
+
+  it("reports the kernel's Python error and releases the completed request", async () => {
+    const { kernel, operation } = kernelForOutcome({
+      status: "error",
+      error: { ename: "NameError", evalue: "name 'cdb' is not defined", traceback: [] },
+    });
+    const error = spyOn(lumine.notifications, "addError");
+    const success = spyOn(lumine.notifications, "addSuccess");
+    mainModule.consumeJupyterKernel({ getActiveKernel: () => kernel });
+
+    await mainModule.cdbClear();
+
+    expect(error).toHaveBeenCalledOnceWith("Failed to clear cache", {
+      detail: "NameError: name 'cdb' is not defined",
+    });
+    expect(success).not.toHaveBeenCalled();
+    expect(operation.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports a failure to submit the kernel request", async () => {
+    const { kernel } = kernelForOutcome({ status: "ok" });
+    kernel.request.and.throwError("Session unavailable");
+    const error = spyOn(lumine.notifications, "addError");
+    mainModule.consumeJupyterKernel({ getActiveKernel: () => kernel });
+
+    await expectAsync(mainModule.cdbClear()).toBeResolved();
+
+    expect(error).toHaveBeenCalledOnceWith("Failed to clear cache", {
+      detail: "Session unavailable",
+    });
+  });
+
+  it("silently releases a cancelled request", async () => {
+    const { kernel, operation } = kernelForOutcome({ status: "cancelled" });
+    const error = spyOn(lumine.notifications, "addError");
+    const success = spyOn(lumine.notifications, "addSuccess");
+    mainModule.consumeJupyterKernel({ getActiveKernel: () => kernel });
+
+    await mainModule.cdbClear();
+
+    expect(error).not.toHaveBeenCalled();
+    expect(success).not.toHaveBeenCalled();
+    expect(operation.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores a result from a retired kernel generation", async () => {
+    const { kernel, operation } = kernelForOutcome({ status: "ok" });
+    kernel.generation = 2;
+    const success = spyOn(lumine.notifications, "addSuccess");
+    mainModule.consumeJupyterKernel({ getActiveKernel: () => kernel });
+
+    await mainModule.cdbClear();
+
+    expect(success).not.toHaveBeenCalled();
+    expect(operation.dispose).toHaveBeenCalledTimes(1);
   });
 
   it("warns when cache clearing has no active kernel", async () => {

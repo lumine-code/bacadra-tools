@@ -32,6 +32,8 @@ Commands available in `lumine-workspace`:
 - `bacadra-tools:create-gitignore`: create a Bacadra `.gitignore` beside each tree selection,
 - `bacadra-tools:ligatures`: toggle font ligatures.
 
+Create Gitignore preserves existing `.gitignore` files and reports a refusal for those targets. Newly selected folders without that file receive the Bacadra template, and the command waits for every selected target to finish.
+
 ## Services
 
 - `tree-view.selection`: consumed to read directories and files selected in the tree view.
